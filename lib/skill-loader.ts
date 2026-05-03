@@ -2,7 +2,8 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
 
-const SKILLS_DIR = join(homedir(), '.bob', 'skills');
+const BOB_SKILLS_DIR = join(homedir(), '.bob', 'skills');
+const BUNDLED_SKILLS_DIR = join(process.cwd(), 'skills');
 const PLANNING_SKILLS = ['plan-request', 'brainstorming', 'writing-plans'] as const;
 
 const TOOL_DIRECTIVE = `## IMPORTANT: Environment Constraints
@@ -21,13 +22,14 @@ function stripFrontmatter(content: string): string {
 }
 
 async function loadSkill(name: string): Promise<string> {
-  try {
-    const path = join(SKILLS_DIR, name, 'SKILL.md');
-    const raw = await readFile(path, 'utf8');
-    return stripFrontmatter(raw);
-  } catch {
-    return '';
+  // Try ~/.bob/skills/ first, fall back to bundled skills/ in the project
+  for (const dir of [BOB_SKILLS_DIR, BUNDLED_SKILLS_DIR]) {
+    try {
+      const raw = await readFile(join(dir, name, 'SKILL.md'), 'utf8');
+      return stripFrontmatter(raw);
+    } catch { /* try next */ }
   }
+  return '';
 }
 
 export async function buildSystemPrompt(): Promise<string> {
