@@ -1,19 +1,16 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import {
-  LayoutDashboard,
-  AlertTriangle,
-  Layers,
-  Lightbulb,
-  FileText,
-  ChevronRight,
+  LayoutDashboard, AlertTriangle, Layers, Lightbulb, FileText, ChevronRight, ArrowLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
   activeSection: string;
   onSectionChange: (section: string) => void;
+  showBack?: boolean;
 }
 
 const navItems = [
@@ -24,18 +21,12 @@ const navItems = [
   { id: "report", label: "Full Report", icon: FileText },
 ];
 
-export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
+export function Sidebar({ activeSection, onSectionChange, showBack = false }: SidebarProps) {
   return (
     <aside className="w-64 h-screen bg-sidebar border-r border-sidebar-border flex flex-col">
       <div className="p-6 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
-          <Image
-            src="/bob-mascot.png"
-            alt="BobOps mascot"
-            width={40}
-            height={40}
-            className="rounded-lg"
-          />
+          <Image src="/bob-mascot.png" alt="BobOps mascot" width={40} height={40} className="rounded-lg" />
           <span className="font-semibold text-white">BobOps</span>
         </div>
       </div>
@@ -70,18 +61,20 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
       </nav>
 
       <div className="p-4 border-t border-sidebar-border">
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#1e3a5f]">
-          <Image
-            src="/bob-mascot.png"
-            alt="BobOps"
-            width={20}
-            height={20}
-            className="rounded"
-          />
-          <span className="text-xs text-slate-300">
-            Analysis Complete
-          </span>
-        </div>
+        {showBack ? (
+          <Link
+            href="/"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#1e3a5f] hover:bg-[#1e3a5f]/80 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 text-slate-300" />
+            <span className="text-xs text-slate-300">New Analysis</span>
+          </Link>
+        ) : (
+          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#1e3a5f]">
+            <Image src="/bob-mascot.png" alt="BobOps" width={20} height={20} className="rounded" />
+            <span className="text-xs text-slate-300">Analysis Complete</span>
+          </div>
+        )}
       </div>
     </aside>
   );
