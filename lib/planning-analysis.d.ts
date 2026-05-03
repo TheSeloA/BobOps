@@ -4,6 +4,15 @@ export interface ThreePointHours {
   pessimistic: number;
 }
 
+export interface CostLineItem {
+  key: string;
+  label: string;
+  optimisticHours: number | null;
+  expectedHours: number | null;
+  pessimisticHours: number | null;
+  expectedCost: number;
+}
+
 export interface CostEstimate {
   keywordsFound: string[];
   confidence: 'high' | 'medium' | 'low';
@@ -11,6 +20,7 @@ export interface CostEstimate {
   cost: { low: number; expected: number; high: number };
   hourlyRate: number;
   riskBufferPercent: number;
+  lineItems: CostLineItem[];
 }
 
 export interface RiskWarning {

@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { buildSystemPrompt } from '@/lib/skill-loader';
 import { saveConversation } from '@/lib/storage';
 import { callBobStream, hasMissingCredentials } from '@/lib/bob-client';
+import { fetchGitHubRepoContext } from '@/lib/github-reader';
 import type { BobMessage } from '@/lib/bob-client';
 
 export async function POST(req: NextRequest) {
@@ -13,17 +14,23 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { idea } = await req.json() as { idea: string };
+  const { idea, repoUrl } = await req.json() as { idea: string; repoUrl?: string };
   if (!idea?.trim()) {
     return new Response(JSON.stringify({ error: 'idea is required' }), { status: 400 });
   }
 
   const id = randomUUID();
-  const systemPrompt = await buildSystemPrompt();
+  const [systemPrompt, repoContext] = await Promise.all([
+    buildSystemPrompt(),
+    repoUrl ? fetchGitHubRepoContext(repoUrl) : Promise.resolve(null),
+  ]);
+
+  let userMessage = `Idea: ${idea.trim()}`;
+  if (repoContext) userMessage += `\n\n${repoContext}`;
 
   const messages: BobMessage[] = [
     { role: 'system', content: systemPrompt },
-    { role: 'user', content: `Idea: ${idea.trim()}` },
+    { role: 'user', content: userMessage },
   ];
 
   await saveConversation({ id, idea: idea.trim(), createdAt: new Date().toISOString(), messages });

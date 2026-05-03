@@ -13,6 +13,7 @@ interface Message {
 
 interface ChatScreenProps {
   idea: string;
+  repoUrl?: string | null;
 }
 
 async function readSSEStream(
@@ -49,7 +50,7 @@ async function readSSEStream(
   }
 }
 
-export function ChatScreen({ idea }: ChatScreenProps) {
+export function ChatScreen({ idea, repoUrl }: ChatScreenProps) {
   const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
   const [streamingText, setStreamingText] = useState('');
@@ -104,7 +105,7 @@ export function ChatScreen({ idea }: ChatScreenProps) {
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ idea }),
+          body: JSON.stringify({ idea, repoUrl: repoUrl || undefined }),
         });
         await readSSEStream(
           res,
