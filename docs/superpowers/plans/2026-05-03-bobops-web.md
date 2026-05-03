@@ -47,8 +47,8 @@
 
 ```
 BOBSHELL_API_KEY=bob_prod_bob-apikey_<your-key>
-BOB_INSTANCE_ID=20260320-1730-1190-51d7-2eb712f71838
-BOB_TEAM_ID=019dac3e-6ca3-7ebd-9e7b-b0efaf7f7a0c
+BOB_INSTANCE_ID=<API_KEY>
+BOB_TEAM_ID=<API_KEY>
 ```
 
 - [ ] **Step 2: Create data directories**
